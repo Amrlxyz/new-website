@@ -127,7 +127,7 @@ tag_archive:
 
 
 # --  Custom Configs -- #
-locale: "en"
+# locale: "en"
 enable_copy_code_button: true
 
 atom_feed:

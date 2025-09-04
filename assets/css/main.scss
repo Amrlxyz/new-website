@@ -5,8 +5,20 @@ search: false
 
 @charset "utf-8";
 
-$link-color: rgb(41, 47, 11);
-
+$link-color: rgb(198, 50, 12);
+$background-color: rgb(240, 240, 240);
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
+
+
+.social-icons {
+  .fa-linkedin {
+    color: #000000;
+  }
+}
+
+.page__title a,
+.archive__item-title a {
+  text-decoration: none;
+}

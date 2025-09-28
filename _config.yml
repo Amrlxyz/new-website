@@ -83,7 +83,7 @@ author:
       url: "https://github.com/Amrlxyz"
     - label: "linkedin"
       icon: "fab fa-fw fa-linkedin"
-      url: "https://linkedin.com/amierulhakeem"
+      url: "https://linkedin.com/in/amierulhakeem"
 
 footer:
   links:
@@ -95,7 +95,7 @@ footer:
       url: "https://github.com/Amrlxyz"
     - label: "linkedin"
       icon: "fab fa-fw fa-linkedin"
-      url: "https://linkedin.com/amierulhakeem"
+      url: "https://linkedin.com/in/amierulhakeem"
 
 defaults:
   # _posts

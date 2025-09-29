@@ -28,7 +28,7 @@ minimal_mistakes_skin: "contrast" # "air", "aqua", "contrast", "dark", "dirt", "
 search: true
 
 
-url: "https://amrl.xyz"
+url: "https://www.amierulhakeem.dev"
 
 # Build settings
 markdown: kramdown
@@ -65,9 +65,12 @@ plugins:
 
 author:
   name   : "Amierul Hakeem"
-  # avatar : "/assets/images/bio-photo.jpg"
-  bio    : "I am an **amazing** person." # Note: Markdown is allowed
-  location: Manchester, UK
+  avatar : "/assets/images/bio-photo.jpg"
+  # bio    : "MEng Mechatronics Engineering / <br> 
+  #           University of Manchester / <br>
+  #           Electronics Hobbyist " # Note: Markdown is allowed
+  bio    : "A Mechatronics Engineer who likes Electronics and Programming" # Note: Markdown is allowed
+  location: University of Manchester
   links:
     # - label: "Website"
     #   icon: "fas fa-fw fa-link"

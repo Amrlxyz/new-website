@@ -6,7 +6,11 @@ permalink: /portfolio/
 header:
   overlay_color: "#ffffffff"
   overlay_filter: rgba(0, 0, 0, 0.7)
-  overlay_image: /assets/images/unsplash-image-1.jpg
+  overlay_image: /assets/images/bms-boards-isometric.jpg
+  actions:
+  - label: "Professional CV"
+    url: "assets/documents/Amierul_Hakeem_CV.pdf"
+
 excerpt: "Highlights of My Projects"
 
 # # Main categories row

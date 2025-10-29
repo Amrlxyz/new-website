@@ -6,12 +6,12 @@ permalink: /
 header:
   overlay_color: "#ffffff"
   overlay_filter: rgba(0, 0, 0, 0.7)
-  overlay_image: /assets/images/unsplash-image-1.jpg
+  overlay_image: /assets/images/soldering-timelapse.gif
   actions:
    - label: "Projects Portfolio"
      url: "./portfolio/"
-  # caption: "pcb design i made"
-excerpt: "(Work in Progress) The place where I share my projects and cool stuff I learn in my engineering journey"
+     
+excerpt: "The place where I share my projects and cool stuff I learn in my engineering journey"
 
 intro: 
   - excerpt: 'All written by me - no AI used for content'
@@ -26,7 +26,7 @@ feature_row_projects:
     btn_class: "btn--primary"
 
 feature_row_exp:
-  - image_path: /assets/home/soldering-timelapse.gif
+  - image_path: /assets/images/bms-testing.jpg
     alt: "placeholder image 2"
     title: "Experiments and Technical Articles"
     excerpt: 'The best way to learn is to try, fail, learn, repeat.'

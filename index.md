@@ -14,89 +14,42 @@ header:
 excerpt: "(Work in Progress) The place where I share my projects and cool stuff I learn in my engineering journey"
 
 intro: 
-  - excerpt: 'Centered with `type="center"`'
+  - excerpt: 'All written by me - no AI used for content'
 
-feature_row:
-
-  - title: "Embedded Sytems"
-    image_path: assets/images/unsplash-gallery-image-1-th.jpg
-    alt: "placeholder image 1"
-    excerpt: "This is some sample content that goes here with **Markdown** formatting."
-    url: "#test-link"
-    btn_label: "Read More"
-    btn_class: "btn--info btn--small"
-
-
-  - title: "Power Electronics"
-    image_path: /assets/images/unsplash-gallery-image-2-th.jpg
-    alt: "placeholder image 2"
-    excerpt: "This is some sample content that goes here with **Markdown** formatting."
-    url: "#test-link"
-    btn_label: "Read More"
-    btn_class: "btn--info btn--small"
-
-  - title: "C/C++"
-    image_path: /assets/images/unsplash-gallery-image-3-th.jpg
-    excerpt: "This is some sample content that goes here with **Markdown** formatting."
-
-  - title: "Python"
-    image_path: /assets/images/unsplash-gallery-image-2-th.jpg
-    alt: "placeholder image 2"
-    excerpt: "This is some sample content that goes here with **Markdown** formatting."
-    url: "#test-link"
-    btn_label: "Read More"
-    btn_class: "btn--info btn--small"
-
-  - title: "PCB Design"
-    image_path: /assets/images/unsplash-gallery-image-2-th.jpg
-    alt: "placeholder image 2"
-    excerpt: "This is some sample content that goes here with **Markdown** formatting."
-    url: "#test-link"
-    btn_label: "Read More"
-    btn_class: "btn--info btn--small"
-
-  - title: "3D Mechanical CAD"
-    image_path: /assets/images/unsplash-gallery-image-2-th.jpg
-    alt: "placeholder image 2"
-    excerpt: "This is some sample content that goes here with **Markdown** formatting."
-    url: "#test-link"
-    btn_label: "Read More"
-    btn_class: "btn--info btn--small"
-
-feature_row2:
-  - image_path: /assets/images/unsplash-gallery-image-2-th.jpg
+feature_row_projects:
+  - image_path: /assets/home/soldering-timelapse.gif
     alt: "placeholder image 2"
     title: "Engineering Projects"
-    excerpt: 'This is some sample content that goes here with **Markdown** formatting. Left aligned with `type="left"`'
+    excerpt: 'I like doing random projects that interests me at the time and whichever I did not forget *should* be here.'
     url: "#test-link"
     btn_label: "Read More"
     btn_class: "btn--primary"
 
-feature_row3:
-  - image_path: /assets/images/unsplash-gallery-image-2-th.jpg
+feature_row_exp:
+  - image_path: /assets/home/buggy-race-day.jpg
     alt: "placeholder image 2"
     title: "Experiments and Technical Articles"
-    excerpt: 'This is some sample content that goes here with **Markdown** formatting. Right aligned with `type="right"`'
+    excerpt: 'The best way to learn is to try, fail, learn, repeat.'
     url: "#test-link"
     btn_label: "Read More"
     btn_class: "btn--primary"
 
-feature_row4:
-  - image_path: /assets/images/unsplash-gallery-image-2-th.jpg
-    alt: "placeholder image 2"
+feature_row_about:
+  - image_path: /assets/home/my-pic.jpg
+    alt: "my picture with my FS team's car"
     title: "About Me"
-    excerpt: 'This is some sample content that goes here with **Markdown** formatting. Centered with `type="center"`'
+    excerpt: 'Just a guy who likes electronics'
     url: "#test-link"
-    btn_label: "Read More"
+    btn_label: "Learn More"
     btn_class: "btn--primary"
 ---
 
-<!-- {% include feature_row id="intro" type="center" %} -->
+{% include feature_row id="intro" type="center" %}
 
-{% include feature_row %}
+<!-- {% include feature_row %} -->
 
-{% include feature_row id="feature_row2" type="left" %}
+{% include feature_row id="feature_row_projects" type="left" %}
 
-{% include feature_row id="feature_row3" type="right" %}
+{% include feature_row id="feature_row_exp" type="right" %}
 
-{% include feature_row id="feature_row4" type="center" %}
+{% include feature_row id="feature_row_about" type="center" %}

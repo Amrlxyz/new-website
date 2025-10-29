@@ -11,7 +11,7 @@ header:
    - label: "Projects Portfolio"
      url: "./portfolio/"
   # caption: "pcb design i made"
-excerpt: "The place where I share my projects and cool stuff I learn in my engineering journey"
+excerpt: "(Work in Progress) The place where I share my projects and cool stuff I learn in my engineering journey"
 
 intro: 
   - excerpt: 'Centered with `type="center"`'

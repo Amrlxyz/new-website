@@ -69,7 +69,7 @@ author:
   # bio    : "MEng Mechatronics Engineering / <br> 
   #           University of Manchester / <br>
   #           Electronics Hobbyist " # Note: Markdown is allowed
-  bio    : "A Mechatronics Engineer who likes Electronics and Programming" # Note: Markdown is allowed
+  bio    : "A **Mechatronics Engineer** who likes Electronics and Programming" # Note: Markdown is allowed
   location: University of Manchester
   links:
     # - label: "Website"
@@ -79,8 +79,8 @@ author:
     #   icon: "fab fa-fw fa-twitter-square"
     #   url: "https://twitter.com/"
     - label: "amierulhakeem02@gmail.com"
-      icon: "fas fa-fw fa-envelope-square"
-      # url: "mailto:your.name@email.com"
+      icon: "fas fa-fw fa-envelope"
+      url: "mailto:amierulhakeem02@gmail.com"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/Amrlxyz"

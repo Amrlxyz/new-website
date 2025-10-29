@@ -69,7 +69,7 @@ project_row_f1is:
 
 others_row: 
   - excerpt: '[View Other Projects](/){: .btn .btn--large .btn--info }
-              [About Me](/){: .btn .btn--large .btn--info }'
+              [About Me](/about){: .btn .btn--large .btn--info }'
 ---
 
 

@@ -39,7 +39,7 @@ feature_row_about:
     alt: "my picture with my FS team's car"
     title: "About Me"
     excerpt: 'Im just a guy who likes electronics and trying to get better at it'
-    url: "#test-link"
+    url: "/about"
     btn_label: "Learn More"
     btn_class: "btn--primary"
 ---

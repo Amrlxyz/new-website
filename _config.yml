@@ -17,18 +17,15 @@ title: Amierul Hakeem
 title_separator: "|"
 subtitle: "Mechatronics Engineer"
 
-email:
+email: amierulhakeem02@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-twitter_username: username
-github_username: username
+  My personal website
+github_username: Amrlxyz
 minimal_mistakes_skin: "dark" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise", "default"
 search: true
-
-
 url: "https://www.amierulhakeem.dev"
+
+
 
 # Build settings
 markdown: kramdown

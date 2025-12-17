@@ -16,8 +16,6 @@ Here are my uni stats:
 
 # Story of My Life
 
-If I have to describe myself in one word I would say im a **pragmatic** person. 
-
 I always think of things in terms of practicality. I challenge a lot of ideas I encounter in life which had ultimately led me to taking on an engineering degree.
 
 Why Mechatronics? Robots are cool and I wanted to do a little bit of everything.

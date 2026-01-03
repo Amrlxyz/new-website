@@ -8,6 +8,15 @@ search: false
 $link-color: rgb(86, 220, 233);
 // $background-color: rgb(240, 240, 240);
 
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+
+/* Default system typefaces */
+$serif      : Georgia, Times, serif;
+$sans-serif : "IBM Plex Sans", sans-serif;
+$monospace  : Monaco, Consolas, "Lucida Console", monospace;
+
+// $global-font-family : $sans-serif;
+
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
 
@@ -18,7 +27,17 @@ $link-color: rgb(86, 220, 233);
   }
 }
 
+// Removes underline
 .page__title a,
 .archive__item-title a {
   text-decoration: none;
+}
+
+// @import "minimal-mistakes";
+
+
+.page__content {
+  font-family: $global-font-family;
+  // font-size: $type-size-6;
+  font-size: 0.9em;
 }

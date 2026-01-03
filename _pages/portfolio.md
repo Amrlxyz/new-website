@@ -8,7 +8,7 @@ header:
   overlay_filter: rgba(0, 0, 0, 0.7)
   overlay_image: /assets/images/bms-boards-isometric.jpg
   actions:
-  - label: "Professional CV"
+  - label: "Latest General CV"
     url: "assets/documents/Amierul_Hakeem_CV.pdf"
 
 excerpt: "Highlights of My Projects"

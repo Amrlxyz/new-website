@@ -7,6 +7,10 @@ categories:
 tags:
   - website
   - self hosting
+
+header:
+  # image: /assets/posts_assets/website_front-page.png
+  teaser: /assets/posts_assets/website_front-page.png
 ---
 
 # Motivation

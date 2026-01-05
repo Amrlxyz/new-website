@@ -38,6 +38,8 @@ There are other similar videos on this device that had inspired this project. Wh
 2. Second player always win
 3. Always draw since second player can always defend
 
+As a an engineer rather than blindly trusting the comments, I spent an unreasonable amount of time just to scratch this itch in my brain to solve the game.
+
 What do you think? Before I reveal my results, have a go with a web version i made, play it and take a guess. I made the AI play perfectly so good luck ;) >> _The answer is at [the end](#results) of the article._
 
 **Play tactic-toe online:**
@@ -49,15 +51,15 @@ What do you think? Before I reveal my results, have a go with a web version i ma
 
 # The Project
 
-As a an engineer rather than blindly trusting the comments, I spent an unreasonable amount of time just to scratch this itch in my brain to solve the game.
+Last summer, I decided that I wanted to do a fun side project that I can showcase to people and this project fits perfectly. The main idea is simple enough that most people can understand.
 
-Then after that, I also made a PCB version of the game which also doubles as my name card, so I can give it to people to play it in real life, with the perfect AI running on it.
-
-![tactic-toe pcb](/assets/posts_assets/tactictoe_pcb-front-back-compressed.jpg){: .align-center}
+I've also been inspired by PCB name cards people made I've seen online but havent really got an idea for my own design as I dont want to just copy others' design as it meant to be personal. 
 
 As I am graduating next Summer 2026, it'll be nice to have a cool name card that I can just give to people for networking as I need to find a job soon.
 
-So, last summer, I decided that I wanted to do a fun side project that I can easily showcase to people and this project fits perfectly. Its a simple enough project that most people can understand as compared to my previous more technical projects that requires technical context.
+This game is my best idea to be made as my PCB name card, with the perfect AI running on it, so it can be played as a single player.
+
+![tactic-toe pcb](/assets/posts_assets/tactictoe_pcb-front-back-compressed.jpg){: .align-center}
 
 I will be separating the project into **3 different aspects** as each deserves their own article.
 
@@ -83,7 +85,7 @@ Hardware article: **link**
 
 ![tactic-toe pcb gameplay](/assets/posts_assets/tactictoe_pcb-gameplay-compressed.gif){: .align-center}
 
-After creating the optimal AI in python, having to convert the program into C and to run it on a 6KB/32KB RAM/ROM microcontroller itself is a different challenge. Tactic-toe has **16030 unique game states** even after a full optimisation. Simply storing the best moves for every state in ROM is just impossible since you need atleast 3 bytes to represent a unique state as I discovered. Rather than manually figuring out the best strategy, I managed to make the AI play perfectly without hard-coding specific strategies/patterns.
+After creating the optimal AI in python, having to convert the program into C and to run it on a 6KB/32KB RAM/ROM microcontroller itself is a different challenge. Tactic-toe has **16030 unique game states** even after full optimisation. Simply storing the best moves for every state in ROM is just impossible since you need atleast 3 bytes to represent a unique state as I discovered. Rather than manually figuring out the best strategy, I managed to make the AI play perfectly without hard-coding specific strategies/patterns.
 
 Firmware article: **link** 
 {: .notice}
@@ -92,7 +94,7 @@ Firmware article: **link**
 
 # Results
 
-It is a solved game with the **first player will always win** if played perfectly and it takes atleast **13 moves** or less from the start for the first player to win, shown below:
+Its actually a solved game. The **first player will always win** if played perfectly and it takes atleast **13 moves** or less from the start to win, shown below:
 
 ![tactictoe optimal moves](/assets/posts_assets/tactictoe_optimal-moves.gif){: .align-center}
 

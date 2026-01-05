@@ -108,7 +108,7 @@ defaults:
       show_date: true
       read_time: true
       comments: true
-      share: true
+      share: fales # true
       related: true
 
       toc: true

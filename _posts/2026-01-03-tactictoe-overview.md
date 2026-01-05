@@ -1,9 +1,9 @@
 ---
-title: "Tactic-toe (Overview)"
+title: "Tactic-toe (Introduction and Overview)"
 # last_modified_at: 2017-03-09T16:20:02-05:00
 excerpt: "tic-tac-toe but with a 3-mark limit"
 categories:
-  - Blog
+  - Projects
 tags:
   - PCB Design
   - Python

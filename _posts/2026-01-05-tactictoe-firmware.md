@@ -1,9 +1,9 @@
 ---
-title: "Tactic-toe (Overview)"
+title: "Tactic-toe (Firmware)"
 # last_modified_at: 2017-03-09T16:20:02-05:00
-excerpt: "tic-tac-toe but with a 3-mark limit"
+excerpt: "Optimising tactic-toe for a microcontroller"
 categories:
-  - Blog
+  - Projects
 tags:
   - PCB Design
   - Python
@@ -11,8 +11,8 @@ tags:
   - Embedded Systems
 
 header:
-  image: /assets/posts_assets/tactictoe_banner.jpg
-  teaser: /assets/posts_assets/tactictoe_banner.jpg
+  # image: /assets/posts_assets/tactictoe_pcb-gameplay-compressed.gif
+  teaser: /assets/posts_assets/tactictoe_pcb-gameplay-compressed.gif
 ---
 
 

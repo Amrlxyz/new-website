@@ -1,18 +1,16 @@
 ---
-title: "Tactic-toe (Overview)"
+title: "Tactic-toe (Software)"
 # last_modified_at: 2017-03-09T16:20:02-05:00
-excerpt: "tic-tac-toe but with a 3-mark limit"
+excerpt: "How tactic-toe was solved"
 categories:
-  - Blog
+  - Projects
 tags:
-  - PCB Design
   - Python
-  - C/C++
-  - Embedded Systems
+  - AI
 
 header:
-  image: /assets/posts_assets/tactictoe_banner.jpg
-  teaser: /assets/posts_assets/tactictoe_banner.jpg
+  image: /assets/posts_assets/tactictoe_web-game.png
+  teaser: /assets/posts_assets/tactictoe_web-game.png
 ---
 
 

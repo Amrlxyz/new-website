@@ -3,7 +3,7 @@ title: "The Making of the Website"
 # last_modified_at: 2017-03-09T16:20:02-05:00
 excerpt: "My motivation and journey of making this website"
 categories:
-  - Blog
+  - Projects
 tags:
   - website
   - self hosting

@@ -21,7 +21,7 @@ feature_row_projects:
     alt: "placeholder image 2"
     title: "Engineering Projects"
     excerpt: 'I like doing random projects that interests me at the time and whichever I did not forget *should* be here.'
-    url: "#test-link"
+    url: "/categories/#projects"
     btn_label: "Read More"
     btn_class: "btn--primary"
 
@@ -30,7 +30,7 @@ feature_row_exp:
     alt: "placeholder image 2"
     title: "Experiments and Technical Articles"
     excerpt: 'The best way to learn is to try, fail, learn, repeat.'
-    url: "#test-link"
+    url: "/categories"
     btn_label: "Read More"
     btn_class: "btn--primary"
 

@@ -18,4 +18,6 @@ header:
 
 # Hardware
 
+Please first see the [overview article](../tactictoe-overview) to learn about tactic-toe
+{: .notice}
 

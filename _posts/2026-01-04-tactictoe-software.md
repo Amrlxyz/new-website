@@ -22,7 +22,7 @@ Please first see the [overview article](../tactictoe-overview) to learn about ta
 {: .notice}
 
 
-I will first go through the 
+I will first go over the typical algorithm used for making an AI for a normal tic-tac-toe. 
 
 
 # Minimax
@@ -38,16 +38,15 @@ I tried my best to explain it in my own words but I think this video below expla
 > Its crazy how much optimisation that goes into making chess engines, and yet chess has still not yet been solved even with super fast computers.
 
 
-
 # First Attempt
 
-If you've ever taken a course on an AI, chances are you might have learnt about **minimax** algorithm to make an AI for tictactoe. Thats indeed what I did when I took CS50ai an online course by Harvard. I'd recommend everyone reading this to take on that course. It covers all kinds of AI types not just LLMs.
+If you've ever taken a course on an AI, chances are you might have used **minimax** to make an AI for tictactoe. Thats indeed what I did when I took CS50ai an online course by Harvard. I'd recommend everyone reading this to take on that course. It covers all kinds of AI types not just LLMs.
 
 I started it off with the same code from the CS50ai course. So, I have the python code for a tictactoe game with a basic minimax AI algorithm.
 
+The code here - recursive 
 
 -- insert code here --
-
 
 Then, I modified the game logic for it to become tactic-toe (3 maximum marks), and ran the same minimax algorithm and crashes due to too much recursion calls.
 

@@ -37,31 +37,300 @@ I tried my best to explain it in my own words but I think this video below expla
 
 > Its crazy how much optimisation that goes into making chess engines, and yet chess has still not yet been solved even with super fast computers.
 
+If you've ever taken a course on an AI, chances are you might have used **minimax** to make an AI for tictactoe. Thats indeed what I did when I took [CS50ai](https://cs50.harvard.edu/ai/) an online course by Harvard. I'd recommend everyone reading this to take on that course. It covers all kinds of AI types not just LLMs.
 
-# First Attempt
+Starting off with the same tictactoe code from the course, I modified the code to the new "infinite" game logic. Then, when I ran the original AI with the new game, it fails and crashes.
 
-If you've ever taken a course on an AI, chances are you might have used **minimax** to make an AI for tictactoe. Thats indeed what I did when I took CS50ai an online course by Harvard. I'd recommend everyone reading this to take on that course. It covers all kinds of AI types not just LLMs.
+To see why it fails, here is the basic implementation of minimax algorithm in pseudocode taken from [wikipedia](https://en.wikipedia.org/wiki/Minimax#Pseudocode).
 
-I started it off with the same code from the CS50ai course. So, I have the python code for a tictactoe game with a basic minimax AI algorithm.
+~~~ python 
+function minimax(node, depth, maximizingPlayer) is
+    if depth = 0 or node is a terminal node then
+        return the heuristic value of node
+    if maximizingPlayer then
+        value := −∞
+        for each child of node do
+            value := max(value, minimax(child, depth − 1, FALSE))
+        return value
+    else (* minimizing player *)
+        value := +∞
+        for each child of node do
+            value := min(value, minimax(child, depth − 1, TRUE))
+        return value
 
-The code here - recursive 
+(* Initial call *)
+minimax(origin, depth, TRUE)
+~~~
 
--- insert code here --
-
-Then, I modified the game logic for it to become tactic-toe (3 maximum marks), and ran the same minimax algorithm and crashes due to too much recursion calls.
-
-## Issue 1 - Infinite possible games
-
-Since now the game can be repetetive and never ends, 
+Few important to keep in mind when using minimax:
+1. Recursive: It is a recursive function because it calls itself in the function. 
+2. Heuristic function: When it reaches the end (or terminal) node, it has to return the heuristic value of the node, typically determined by a heuristic function that evaluates the "score" for a given state. 
 
 
+## Recursion
+
+One big problem caused by the recursion, if the game can infinitely repeat (which is the case for tactic-toe), it will get stuck and never reaches the end state, resulting in a crash.
+
+Initially, I did not limit the search depth like shown in the example code above, which resulted in the first crash. After realising the cause and implemented the depth limit, it now does not crash. Howecer, it is not that simple unfortunately.
+
+How would you know how deep your search algorithm should go for in order for it to find the best move? The time it takes for the function to execute will increase exponentially as it goes deeper, the branches expands more and more. If its too small, then it might've not looked deep enough to be able to find the right move.
+
+As expected, the AI does not perform well when I played against it as it kept losing. Even with a very high depth, it was taking few minutes to calculate and still lost. This is partly explained by the second point, the heuristic function. 
+
+## Heuristic Function
+
+Heuristic function evaulates how good or bad a state of the game is and typically with the normal tic-tac-toe, you would only check for the end states (if any of the player is winning or draw if no spaces are left). This works perfectly fine in this case because the heuristic function is only called when the game ends (either win or draw).
+
+Why this becomes a problem for an infinite game is if the function is terminated early (by the depth limit), it has to determine how good a state is for a player when the game has not ended yet.
+
+One way, you could say that if it reaches the depth limit, its probably a "draw" state as it shouldve already looked through the optimal moves, which are higher up on the branch. I tried this and i found out that it doesn't work that way as the AI will always thinks that there is a "draw" further deep even though its already in a losing state.
+
+Another approach is to evaluate the state purely from the current position of the marks on the board. For example, player with middle mark has better chances than the marks in the corner. This is actually how chess engines evaluate its position (but in a more clever way). However, there are few issues with this approach.
+
+Theres no game theory to support that one square is better and than the other unlike chess where you have piece values and best squares for certain pieces. Sure, normal tic-tac-toe has its strategy, but if you played the tactic-toe version yourself you would know the strategy is very different. So, I would have to figure it out and hardcode it myself. Its not impossible to do but, the limitation is that the AI will only be as good as me which is not good enough in my book.
+
+## Optimization Attempts and Fixes
+
+Surely minimax should work right? Here are some other things that I have tried to make it work:
+
+### Depth based Heuristic
+
+Another problem with the original heuristic is that it only sees the final outcome, whether it will win or lose at the end. What that means is that if it knows that if its in a losing state it won't try to defend and just make random-ish moves without trying to defend becuase it knows, it will only either be lose or win, the heuristic does not reward for staying alive longer.
+
+So, what i did is, adding depth into the heuristic function called `utility()` as shown below:
+
+~~~ python
+def utility(state, depth):
+    """
+    Returns the value of the board, also based on depth the of the search (higher depth means less steps to get to the position)
+    """
+    winPlayer = winner(state)
+    if winPlayer == X:
+        return 1 * depth
+    elif winPlayer == O:
+        return -1 * depth 
+    else:
+        return 0
+~~~
+
+Now the score of a state also depends on how quick the state can be reached. This dramatically improved how good the AI was but its still loses sometimes.
+
+### Duplicate State Detection
+
+One of the first ways that I thought of fixing the recursion depth issue is to keep track of the states already been evaluated before and returning a draw if the same state is detected. Because if you think about it, it can only stuck in a loop if goes in a loop where it goes back to the original position, so if you can get back to the original position, it must be a drawing position right?
+
+~~~ python
+def eval(board, path):
+    """
+    Recursive minimax function
+    """
+    if boardHashed in path:
+        return 0
+
+    ### rest of the minimax logic
+
+    for move in available_moves:
+        path.append(board)        # Add the current board to the list of evaluated boards in the path
+        eval(new_board, path)     # recursive call with the new path list
+
+    ### etc..
+~~~
+
+After I tried this, it still had recursion loop error. Turns out, if you think about it even more, it doesnt work as the repeating loop can be in any different sizes, and it could go through all the sates before detecting the a repeating state. A better way of doing this as I later tried is with transposition table.   
+
+### Negamax
+
+There is another version of minimax where its basically just flips the scores of each player by taking the negative score of a state, thus the name - *nega*max. This was no better than the original normal minimax in this case but i thought I might just give it try. However, the [wikipedia](https://en.wikipedia.org/wiki/Negamax#Negamax_with_alpha_beta_pruning_and_transposition_tables) page gives a good example of using negamax with transposition table.
+
+### Alpha-Beta Pruning
+
+The most common optimisation technique for minimax is whats called alpha-beta pruning. It is very simple and yet very clever. The main idea is that if the algorithm detects that the branch its exploring, can only result in worse position than what it had discovered before, it will just "prune" that branch and skips it. The [video](#minimax) at the start explains this very clearly.
+
+This if implemented correctly, it improves the execution times like a lot as it can just skip most branch if its worse anyway. The only downside to this is that its harder to debug the program as it introduces alpha and beta variables which lets just say its very hard to get wrap my head around. Might just be a skill issue honestly.
+
+### Transposition Table
+
+The main idea of keeping track of the discovered states always stuck to me as it can potentially solves all the issues.
+
+If it can just remember the score of each state as its exploring the branches, it would fix the depth issue as it won't get stuck in an infinite recursion loop as it eventually will return to a discovered state. It would also provide a list of states and it's score can prove that the game is solved.
+
+The algorithm in psuedocode taken from [wikipedia](https://en.wikipedia.org/wiki/Negamax#Negamax_with_alpha_beta_pruning_and_transposition_tables) shown below:
+
+~~~ python
+function negamax(node, depth, α, β, color) is
+    alphaOrig := α
+
+    (* Transposition Table Lookup; node is the lookup key for ttEntry *)
+    ttEntry := transpositionTableLookup(node)
+    if ttEntry.is_valid and ttEntry.depth ≥ depth then
+        if ttEntry.flag = EXACT then
+            return ttEntry.value
+        else if ttEntry.flag = LOWERBOUND and ttEntry.value ≥ beta then
+            return ttEntry.value
+        else if ttEntry.flag = UPPERBOUND and ttEntry.value ≤ alpha then
+            return ttEntry.value
+
+    if depth = 0 or node is a terminal node then
+        return color × the heuristic value of node
+
+    childNodes := generateMoves(node)
+    childNodes := orderMoves(childNodes)
+    value := −∞
+    for each child in childNodes do
+        value := max(value, −negamax(child, depth − 1, −β, −α, −color))
+        α := max(α, value)
+        if α ≥ β then
+            break
+
+    (* Transposition Table Store; node is the lookup key for ttEntry *)
+    ttEntry.value := value
+    if value ≤ alphaOrig then
+        ttEntry.flag := UPPERBOUND
+    else if value ≥ β then
+        ttEntry.flag := LOWERBOUND
+    else
+        ttEntry.flag := EXACT
+    ttEntry.depth := depth
+    ttEntry.is_valid := true
+    transpositionTableStore(node, ttEntry)
+
+    return value
+
+(* Initial call for Player A's root node *)
+negamax(rootNode, depth, −∞, +∞, 1)
+~~~
+
+It is indeed more complex now that there is αβ pruning with transposition table. Turns out, you can't simply store the calculated states if you are also using αβ pruning because the states that are "pruned" are not fully explored yet. Therefore, if you store it directly, the score might be incomplete as all some part of the branch has been pruned last time its calculated. Plus, the same problem happened where it does not solve the depth problem, so the depth parameter is still needed.
+
+The fix to this is to store more than just the score, in order for it to recalulate next time the function is ran again. Not gonna lie, its very confusing and most of my time was spent trying to get this to work. Eventually, i did get something very promising. 
+
+The final version of this was able to play decently with a high enough calculation depth. HOWEVER, it takes minutes to run for each move and it was giving a symmetrical move a different value of scores when it should've had the same value as its essentially the same if you rotate the board. This indicates that its still not perfect.
+
+
+## Fundamental Problem
+
+Even if I could fix the problems with minimax and get it to work perfectly, I will still not be able to verify if it is making the best moves. At the end, even I couldn't beat it but its still not conclusive if its making perfect moves. I could make it vs itself but that would take too long.
+
+There is also no way of knowing whats the search depth that should be used. In theory, there could be a better move sequence may not be discovered yet becuase of the depth was not sufficient.
+
+So, I decided to take an entirely new approach 
+
+
+# The Solution
+
+I always knew that the easiest way to prove that the AI is perfect if it can analyze all possible states of the game. However, minimax doesnt really fit this purpose since its was meant to calculate the best move as the game progresses, and not analyze the entire game. 
+
+So I came up with a these steps:
+1. Get all the possible states of the game
+2. Assign score of 0 to all states by default.
+3. From all of the possible states, get only the end states and give it the highest score (+ve for X winning, -ve for O winning) 
+4. Iterate through all possible state, and get all of its child states (resulting states from available moves)
+5. If the state is the maximising player's (X) turn, get the maximum score (minimum for O) from its children states.
+6. Apply the current state's score -1 from its maximum child score
+7. If there is a change to the current state's score, +1 to the amount of changes.
+8. If changes is non-zero, loop back to 4 until there are no more changes (it converges).
+
+It might just be easier to show the actual code I made in python:
+
+~~~ python
+def evaluate_best_moves(states_encoded):
+    # Base Scores
+    MAX_SCORE = 100
+    MIN_SCORE = -100
+    DRAW_SCORE = 0
+
+    scores = {}
+    
+    # Create a lookup for the children of each state to avoid re-calculating
+    # children = {encoded_state: set((move1, child1), (move2, child2), ...)}
+    children = {}
+    for state_encoded in states_encoded:
+
+        state = decodeState(state_encoded)
+
+        # Only calculate children for non-terminal states
+        if winner(state) == 0:
+            children[state_encoded] = set([(move, get_canonical_form(result(state, move)["board"], result(state, move)["turn"])) for move in get_moves(state)])
+        else:
+            children[state_encoded] = set()
+
+        # 1. Init scores
+        state_winner = winner(state)
+        if state_winner == X:
+            scores[state_encoded] = MAX_SCORE
+        elif state_winner == O:
+            scores[state_encoded] = MIN_SCORE
+        else:
+            scores[state_encoded] = DRAW_SCORE
+
+    # 2. Iteration until convergence
+    iteration_count = 0
+    while True:
+        iteration_count += 1
+        print(f"Starting iteration {iteration_count}...")
+        
+        # Keep track of changes in a single pass
+        changes = 0
+        
+        # Go through every state that is not a terminal win/loss
+        for state_encoded, children_data in children.items():
+            if len(children_data) == 0:
+                continue
+
+            state_children_encoded = [data[1] for data in children_data]
+
+            # Get the current scores of all children states
+            # Note: We use the scores from the *previous* iteration to calculate the new ones
+            child_scores = [scores[state_child_encoded] for state_child_encoded in state_children_encoded]
+
+            # Apply the minimax principle
+            best_child_score = 0
+            if decodeState(state_encoded)["turn"] == X:
+                best_child_score = max(child_scores)
+            else:  # Turn is O
+                best_child_score = min(child_scores)
+
+            # Adjust the score based on depth
+            new_score = 0
+            if best_child_score > DRAW_SCORE:  # It's a path to a win
+                new_score = best_child_score - 1
+            elif best_child_score < DRAW_SCORE: # It's a path to a loss
+                new_score = best_child_score + 1
+            else: # It's a draw
+                new_score = DRAW_SCORE
+
+            if scores[state_encoded] != new_score:
+                scores[state_encoded] = new_score
+                changes += 1
+
+        print(f"Iteration {iteration_count} finished with {changes} updates.")
+        
+        # 3. Convergence Check
+        if changes == 0:
+            # pprint(children)
+            print("Scores have converged. Halting.")
+            break
+~~~
+
+You could think this of almost like a reverse minimax, where it instead analyzes from the end states and propagates back up to the initial state.
+
+As for the algorithm name, I couldnt find a formal name for this algorithm, but its technically similar to [retrograde analysis](https://en.wikipedia.org/wiki/Retrograde_analysis) in the world of chess. I would call it reverse minimax with my own decaying logic for best moves prioritisation.
+
+Technically, this algorithm can solve any 2 player game given that you have enough memory to store all possible states of the game. Even in this case you can easily reach millions of states you have to store in memory. Games like chess would have significantly a lot more game states so its not really groundbreaking but id try apply it to other games in the future.
+
+## Symmetry Optimisation
+
+tictactoe or even tactic-toe has a board that you can rotate/flip/mirror and essentially be the same board. As just mentioned, this algorithm has to store all possible states in memory. Thus, if we can reduce the amount of state by eliminating duplicate symmetrical states, that can significantly reduce execution time and memory required.
 
 
 
-# Optimisation
 
 
 
+
+
+
+# Result
 
 
 

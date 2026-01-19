@@ -71,7 +71,7 @@ Few important to keep in mind when using minimax:
 
 One big problem caused by the recursion, if the game can infinitely repeat (which is the case for tactic-toe), it will get stuck and never reaches the end state, resulting in a crash.
 
-Initially, I did not limit the search depth like shown in the example code above, which resulted in the first crash. After realising the cause and implemented the depth limit, it now does not crash. Howecer, it is not that simple unfortunately.
+Initially, I did not limit the search depth like shown in the example code above, which resulted in the first crash. After realising the cause and implemented the depth limit, it now does not crash. However, it is not that simple unfortunately.
 
 How would you know how deep your search algorithm should go for in order for it to find the best move? The time it takes for the function to execute will increase exponentially as it goes deeper, the branches expands more and more. If its too small, then it might've not looked deep enough to be able to find the right move.
 
@@ -124,7 +124,7 @@ def eval(board, path):
     """
     Recursive minimax function
     """
-    if boardHashed in path:
+    if boardHashed in path:       # Return 0 if the state its already discovered previously 
         return 0
 
     ### rest of the minimax logic
@@ -132,8 +132,6 @@ def eval(board, path):
     for move in available_moves:
         path.append(board)        # Add the current board to the list of evaluated boards in the path
         eval(new_board, path)     # recursive call with the new path list
-
-    ### etc..
 ~~~
 
 After I tried this, it still had recursion loop error. Turns out, if you think about it even more, it doesnt work as the repeating loop can be in any different sizes, and it could go through all the sates before detecting the a repeating state. A better way of doing this as I later tried is with transposition table.   
@@ -226,7 +224,7 @@ So I came up with a these steps:
 3. From all of the possible states, get only the end states and give it the highest score (+ve for X winning, -ve for O winning) 
 4. Iterate through all possible state, and get all of its child states (resulting states from available moves)
 5. If the state is the maximising player's (X) turn, get the maximum score (minimum for O) from its children states.
-6. Apply the current state's score -1 from its maximum child score
+6. Apply the current state's score = -1 from its maximum child score
 7. If there is a change to the current state's score, +1 to the amount of changes.
 8. If changes is non-zero, loop back to 4 until there are no more changes (it converges).
 
@@ -322,15 +320,96 @@ Technically, this algorithm can solve any 2 player game given that you have enou
 
 tictactoe or even tactic-toe has a board that you can rotate/flip/mirror and essentially be the same board. As just mentioned, this algorithm has to store all possible states in memory. Thus, if we can reduce the amount of state by eliminating duplicate symmetrical states, that can significantly reduce execution time and memory required.
 
+Imagine if we have a standardized way of representing a state of the game that would eliminate any symmtrical duplicates, with that way, any duplicates will be automatically detected. The way I have implemented this is by having a function called `get_canonical_form()` that converts any state to its canonical (standardized) format.
 
+~~~ python
+TRANSFORMATION_MAPS = (
+    # (0, 1, 2, 3, 4, 5, 6, 7, 8), # 0: Identity
+    (2, 5, 8, 1, 4, 7, 0, 3, 6), # 1: Rotate 90  degrees CC
+    (8, 7, 6, 5, 4, 3, 2, 1, 0), # 2: Rotate 180 degrees CC
+    (6, 3, 0, 7, 4, 1, 8, 5, 2), # 3: Rotate 270 degrees CC
+    (2, 1, 0, 5, 4, 3, 8, 7, 6), # 4: Flip horizontally
+    (0, 3, 6, 1, 4, 7, 2, 5, 8), # 5: Flip Horizontally -> Rotate 90  CC (TL / BR Sym)
+    (6, 7, 8, 3, 4, 5, 0, 1, 2), # 6: Flip Horizontally -> Rotate 180 CC (Vertical Flip)
+    (8, 5, 2, 7, 4, 1, 6, 3, 0), # 7: Flip Horizontally -> Rotate 270 CC (TR / BL Sym)
+)
 
+def get_canonical_form(board, turn):
+    # -- getting the canonical state form -- #
+    min_state_encoded = encodeState(flatten_board(board), turn)
 
+    for transform_map in TRANSFORMATION_MAPS:
 
+        flat_board = flatten_board(board)
+        transformed_board = [flat_board[i] for i in transform_map]
 
+        transformed_state_encoded = encodeState(transformed_board, turn)
 
+        if transformed_state_encoded < min_state_encoded:
+            min_state_encoded = transformed_state_encoded
 
+    return min_state_encoded
+~~~
+
+`encodeState()` essentially converts a state into bytes form. The canonical function will try out all transformations and the resulting transformed state with the lowest value in bytes form is the final canonical form.
+
+~~~ python
+def encodeState(board_flat, turn):
+
+    location_arr = boardToPosition(board_flat) 
+
+    # turn_sign = 1 if (turn_sign == 1) else 0
+    encoded_bytes = bytes([
+        (location_arr[0] << 4) | location_arr[1],
+        (location_arr[2] << 4) | location_arr[3],
+        (location_arr[4] << 4) | location_arr[5],
+        1 if (turn == X) else 0
+    ])
+
+    return encoded_bytes
+~~~
+
+How the states are converted to bytes form will be explained in the firmware article.
 
 # Result
 
+It only took a few seconds for the algorithm to calculate all **16030** unique game states. Which is much better than my minimax attempt. 
 
+Each state has its scores ranging from -16 to 16, with 0 being draw and +-16 are the winning states. After a move is made, the score increases _(if best move is played)_. From that, its easy to determine the best moves by just comparing scores of all the child states.
+
+> With that implemented the AI played the game perfectly
+
+I am confident that its playing perfectly as it has explored all the possible states of the game. Plus, me and my friends couldn't even beat it. It always seems that you can still win when in reality the AI is already winning. Its crazy that there are states with **(score == +-1)** where the AI will eventually win in 15 moves if defended perfectly.
+
+## Winning Strategy
+
+From an empty board, **first player will always win** if played perfectly and it takes atleast **13 moves** or less from the start to win, shown below:
+
+![tactictoe optimal moves](/assets/posts_assets/tactictoe_optimal-moves.gif){: .align-center}
+
+> So, whats the winning strategy? How do I win against another player?
+
+The answer is I don't know. I could come up with a few basic strategies but I think its more interesting to see my creation is better than myself. This AI is much smarter than what I could hardcoded strategy myself. Plus, it also could be adapted to other 2 player games which a hardcoded AI will be unable to.
+
+You could use the results from my AI to come up with your own strats and possibly beat me. I think its more fun this way. _Definitely not gatekeeping the best strats for myself :)_
+
+What I can tell is that from an empty board, the centre and corner squares results in a draw. The middle side squares are the only winning moves. With this knowledge, and enough tries you can win against the AI.
+
+# Online Web Version 
+
+To present my AI, I decided to make a web version to easily share with people. Not gonna lie, I vibe coded most of the assests but the game logic was made by me. 
+
+**Play tactic-toe online:**
+
+[tactic-toe.pages.dev](https://tactic-toe.pages.dev/){: .btn .btn--success .btn--large target="_blank"}
+{: .text-center}
+
+The way the web version works is it just has a JSON file with all the best moves and plays a random move out of all the best moves. I couldnt be bothered to reimplement the calculation algorithm in JS.
+
+# Source Code
+
+All of the code used including the web game HTML are all open source in my public github repo. Feel free to try it out or even improve it and **I challenge you to beat my AI**.
+
+Link to github repo: [**github.com/Amrlxyz/tactictoe**](https://github.com/Amrlxyz/tactictoe) 
+{: .notice}
 

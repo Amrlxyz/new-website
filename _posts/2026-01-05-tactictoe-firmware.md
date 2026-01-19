@@ -24,5 +24,18 @@ Please first see the [overview article](../tactictoe-overview) to learn about ta
 {: .notice}
 
 
+# how states are encoded in raw bytes
+
+
+# pwm to send data
+
+
+# interrupts with TSC
+
+
+# programming bit
+
+
+
 
 

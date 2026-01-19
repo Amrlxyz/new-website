@@ -13,10 +13,7 @@ header:
   teaser: /assets/posts_assets/tactictoe_web-game.png
 ---
 
-
----
-
-# Intro
+# Introduction
 
 Please first see the [overview article](../tactictoe-overview) to learn about tactic-toe
 {: .notice}
@@ -139,7 +136,7 @@ After I tried this, it still had recursion loop error. Turns out, if you think a
 
 ### Negamax
 
-There is another version of minimax where its basically just flips the scores of each player by taking the negative score of a state, thus the name - *nega*max. This was no better than the original normal minimax in this case but i thought I might just give it try. However, the [wikipedia](https://en.wikipedia.org/wiki/Negamax#Negamax_with_alpha_beta_pruning_and_transposition_tables) page gives a good example of using negamax with transposition table.
+There is another version of minimax where its basically just flips the scores of each player by taking the negative score of a state, thus the name - *nega*max. This was no better than the original normal minimax in this case but i thought I might just give it try because the [wikipedia](https://en.wikipedia.org/wiki/Negamax#Negamax_with_alpha_beta_pruning_and_transposition_tables) page gives an example of using negamax with transposition table.
 
 ### Alpha-Beta Pruning
 
@@ -220,6 +217,7 @@ So, I decided to take an entirely new approach
 I always knew that the easiest way to prove that the AI is perfect if it can analyze all possible states of the game. However, minimax doesnt really fit this purpose since its was meant to calculate the best move as the game progresses, and not analyze the entire game. 
 
 So I came up with a these steps:
+
 1. Get all the possible states of the game
 2. Assign score of 0 to all states by default.
 3. From all of the possible states, get only the end states and give it the highest score (+ve for X winning, -ve for O winning) 
@@ -392,7 +390,7 @@ From an empty board, **the first player will always win** if played perfectly an
 
 The answer is I don't know. I could come up with a few basic strategies but I think its more interesting to see my creation is better than myself. This AI is much smarter than what I could hardcoding a strategy myself. Plus, it could also be adapted to other 2 player games which you can't say the same for a hardcoded AI.
 
-You could use the results from my AI to come up with your own strats and possibly beat me. I think its more fun this way. _Definitely not gatekeeping the best strats for myself :)_
+You could use the moves from my AI to come up with your own strats. I think its more fun this way. _Definitely not gatekeeping the best strats for myself :)_
 
 What I can tell is that from an empty board, the centre and corner squares results in a draw. The middle side squares are the only winning moves. With this knowledge, and enough tries you can win against the AI.
 

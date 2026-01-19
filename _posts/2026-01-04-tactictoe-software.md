@@ -21,13 +21,14 @@ header:
 Please first see the [overview article](../tactictoe-overview) to learn about tactic-toe
 {: .notice}
 
+This article will explore how I solved tactic-toe and created an AI that plays the game perfectly.
 
-I will first go over the typical algorithm used for making an AI for a normal tic-tac-toe. 
+I will first explore minimax algorithm and my attempts of making it to work. Then, with the context of minimax, I made a better solution and why im confident that I have solved the game and the AI will play perfectly. I also made an online version of the game to easily present it.
 
 
 # Minimax
 
-The most common way of calculating the best move in a turn based game is with the **minimax** algorithm.
+One of the most common ways of calculating the best move in a turn based game is with the **minimax** algorithm.
 
 To put it simply, the algorithm works by having one player trying to maximise the score, while the opponent tries to minimise the score _(thus "minimax")_. It goes through to each possible moves, look ahead and evaluates the next possible moves by the opponent. The algorithm assumes both player chooses the most favourable move in a situation and so the resulting end state is propagated back up to inform if the move results in a good position for the current player.
 
@@ -37,9 +38,9 @@ I tried my best to explain it in my own words but I think this video below expla
 
 > Its crazy how much optimisation that goes into making chess engines, and yet chess has still not yet been solved even with super fast computers.
 
-If you've ever taken a course on an AI, chances are you might have used **minimax** to make an AI for tictactoe. Thats indeed what I did when I took [CS50ai](https://cs50.harvard.edu/ai/) an online course by Harvard. I'd recommend everyone reading this to take on that course. It covers all kinds of AI types not just LLMs.
+If you've ever taken a course on AI, chances are you might have used **minimax** to make an AI for tic-tac-toe. Thats indeed what I did when I took [CS50ai](https://cs50.harvard.edu/ai/) an online course by Harvard. I'd recommend everyone reading this to take on that course. It covers all kinds of AI types not just LLMs.
 
-Starting off with the same tictactoe code from the course, I modified the code to the new "infinite" game logic. Then, when I ran the original AI with the new game, it fails and crashes.
+Starting off with the same tic-tac-toe code from the course, I modified the code to the new "infinite" game logic. Then, when I ran the original AI with the new game, it fails and crashes.
 
 To see why it fails, here is the basic implementation of minimax algorithm in pseudocode taken from [wikipedia](https://en.wikipedia.org/wiki/Minimax#Pseudocode).
 
@@ -71,7 +72,7 @@ Few important to keep in mind when using minimax:
 
 One big problem caused by the recursion, if the game can infinitely repeat (which is the case for tactic-toe), it will get stuck and never reaches the end state, resulting in a crash.
 
-Initially, I did not limit the search depth like shown in the example code above, which resulted in the first crash. After realising the cause and implemented the depth limit, it now does not crash. However, it is not that simple unfortunately.
+Initially, I did not limit the search depth like shown in the example code above, which resulted in the first crash. After realising the cause and implemented the depth limit, it no longer crashes. However, it is not that simple unfortunately.
 
 How would you know how deep your search algorithm should go for in order for it to find the best move? The time it takes for the function to execute will increase exponentially as it goes deeper, the branches expands more and more. If its too small, then it might've not looked deep enough to be able to find the right move.
 
@@ -79,15 +80,15 @@ As expected, the AI does not perform well when I played against it as it kept lo
 
 ## Heuristic Function
 
-Heuristic function evaulates how good or bad a state of the game is and typically with the normal tic-tac-toe, you would only check for the end states (if any of the player is winning or draw if no spaces are left). This works perfectly fine in this case because the heuristic function is only called when the game ends (either win or draw).
+Heuristic function evaluates how good or bad a state of the game is and typically with the normal tic-tac-toe, you would only check for the end states (if any of the player is winning or draw if no spaces are left). This works perfectly fine in this case because the heuristic function is only called when the game ends (either win or draw).
 
-Why this becomes a problem for an infinite game is if the function is terminated early (by the depth limit), it has to determine how good a state is for a player when the game has not ended yet.
+This becomes a problem for an infinite game since if the function is terminated early (by the depth limit), it has to determine how good a state is for a player when the game has not ended yet.
 
-One way, you could say that if it reaches the depth limit, its probably a "draw" state as it shouldve already looked through the optimal moves, which are higher up on the branch. I tried this and i found out that it doesn't work that way as the AI will always thinks that there is a "draw" further deep even though its already in a losing state.
+One way, you could say that if it reaches the depth limit, its probably a "draw" state as it shouldve already looked through the optimal moves, which are higher up on the branch. I tried this and i found out that it doesn't work that way as the AI will always think that there is a "draw" further deep even though its already in a losing state.
 
 Another approach is to evaluate the state purely from the current position of the marks on the board. For example, player with middle mark has better chances than the marks in the corner. This is actually how chess engines evaluate its position (but in a more clever way). However, there are few issues with this approach.
 
-Theres no game theory to support that one square is better and than the other unlike chess where you have piece values and best squares for certain pieces. Sure, normal tic-tac-toe has its strategy, but if you played the tactic-toe version yourself you would know the strategy is very different. So, I would have to figure it out and hardcode it myself. Its not impossible to do but, the limitation is that the AI will only be as good as me which is not good enough in my book.
+Theres no game theory to support that one square is better and than the other unlike chess where you have piece values and best squares for certain pieces. Sure, normal tic-tac-toe has its strategy, but if you played the tactic-toe version yourself you would know the strategy is very different. So, I would have to figure it out and hardcode it myself. Its not impossible to do, but the limitation is that the AI will only be as good as me which is not good enough in my book.
 
 ## Optimization Attempts and Fixes
 
@@ -117,7 +118,7 @@ Now the score of a state also depends on how quick the state can be reached. Thi
 
 ### Duplicate State Detection
 
-One of the first ways that I thought of fixing the recursion depth issue is to keep track of the states already been evaluated before and returning a draw if the same state is detected. Because if you think about it, it can only stuck in a loop if goes in a loop where it goes back to the original position, so if you can get back to the original position, it must be a drawing position right?
+One of the first ways that I thought of fixing the recursion depth issue is to keep track of the states already been evaluated before and returning a draw if the same state is detected. Because if you think about it, it can only get stuck, if it goes in a loop that returns to the original position. So, if you can get back to the original position, it must be a drawing position right?
 
 ~~~ python
 def eval(board, path):
@@ -318,7 +319,7 @@ Technically, this algorithm can solve any 2 player game given that you have enou
 
 ## Symmetry Optimisation
 
-tictactoe or even tactic-toe has a board that you can rotate/flip/mirror and essentially be the same board. As just mentioned, this algorithm has to store all possible states in memory. Thus, if we can reduce the amount of state by eliminating duplicate symmetrical states, that can significantly reduce execution time and memory required.
+tic-tac-toe or even tactic-toe has a board that you can rotate/flip/mirror and essentially be the same board. As just mentioned, this algorithm has to store all possible states in memory. Thus, if we can reduce the amount of state by eliminating duplicate symmetrical states, that can significantly reduce execution time and memory required.
 
 Imagine if we have a standardized way of representing a state of the game that would eliminate any symmtrical duplicates, with that way, any duplicates will be automatically detected. The way I have implemented this is by having a function called `get_canonical_form()` that converts any state to its canonical (standardized) format.
 
@@ -383,13 +384,13 @@ I am confident that its playing perfectly as it has explored all the possible st
 
 ## Winning Strategy
 
-From an empty board, **first player will always win** if played perfectly and it takes atleast **13 moves** or less from the start to win, shown below:
+From an empty board, **the first player will always win** if played perfectly and it takes atleast **13 moves** or less from the start to win, shown below:
 
 ![tactictoe optimal moves](/assets/posts_assets/tactictoe_optimal-moves.gif){: .align-center}
 
 > So, whats the winning strategy? How do I win against another player?
 
-The answer is I don't know. I could come up with a few basic strategies but I think its more interesting to see my creation is better than myself. This AI is much smarter than what I could hardcoded strategy myself. Plus, it also could be adapted to other 2 player games which a hardcoded AI will be unable to.
+The answer is I don't know. I could come up with a few basic strategies but I think its more interesting to see my creation is better than myself. This AI is much smarter than what I could hardcoding a strategy myself. Plus, it could also be adapted to other 2 player games which you can't say the same for a hardcoded AI.
 
 You could use the results from my AI to come up with your own strats and possibly beat me. I think its more fun this way. _Definitely not gatekeeping the best strats for myself :)_
 
@@ -397,7 +398,7 @@ What I can tell is that from an empty board, the centre and corner squares resul
 
 # Online Web Version 
 
-To present my AI, I decided to make a web version to easily share with people. Not gonna lie, I vibe coded most of the assests but the game logic was made by me. 
+To present my AI, I decided to make a web version to easily share with people. Not gonna lie, I vibe coded most of the assets but the game logic was made by me. 
 
 **Play tactic-toe online:**
 
@@ -406,6 +407,8 @@ To present my AI, I decided to make a web version to easily share with people. N
 
 The way the web version works is it just has a JSON file with all the best moves and plays a random move out of all the best moves. I couldnt be bothered to reimplement the calculation algorithm in JS.
 
+If you are curious, open the console on the [online tactic-toe][online-tactictoe] (Ctrl+Shift+I) and it will show you the precalculated state score after a move is placed.
+
 # Source Code
 
 All of the code used including the web game HTML are all open source in my public github repo. Feel free to try it out or even improve it and **I challenge you to beat my AI**.
@@ -413,3 +416,4 @@ All of the code used including the web game HTML are all open source in my publi
 Link to github repo: [**github.com/Amrlxyz/tactictoe**](https://github.com/Amrlxyz/tactictoe) 
 {: .notice}
 
+[online-tactictoe]: https://tactic-toe.pages.dev/ "Optional"

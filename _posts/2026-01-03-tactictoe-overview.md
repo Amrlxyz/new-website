@@ -69,7 +69,7 @@ I will be separating the project into **3 different aspects** as each deserves t
 
 Having an unlimited game possibility makes the problem much harder. The typical minimax algorithm would fail and adding a search depth limit still has the problem of having how do you evaluate a game state? Unlike chess, there are no theory to say, for example, middle are better than corners and you cant just make assumptions if you want it to play perfectly. (Un)surprisingly, **LLM AI tools kept confusing itself** with the assumptions of the normal tictactoe. So, how do I make the AI and how do I verify that its playing perfectly? 
 
-Software article: **link** 
+Software article: **[Link](/projects/tactictoe-software/)** 
 {: .notice}
 
 ## Hardware

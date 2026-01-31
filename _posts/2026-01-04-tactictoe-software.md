@@ -20,7 +20,7 @@ Please first see the [overview article](../tactictoe-overview) to learn about ta
 
 This article will explore how I solved tactic-toe and created an AI that plays the game perfectly.
 
-I will first explore minimax algorithm and my attempts of making it to work. Then, with the context of minimax, I made a better solution and why im confident that I have solved the game and the AI will play perfectly. I also made an online version of the game to easily present it.
+I will first explore minimax algorithm and my attempts of making it to work. Then, with the context of minimax, I made a better solution that solves the game. Using it, I made and AI that plays the game perfectly with an online version of the game for demonstration.
 
 
 # Minimax
@@ -216,6 +216,8 @@ So, I decided to take an entirely new approach
 
 I always knew that the easiest way to prove that the AI is perfect if it can analyze all possible states of the game. However, minimax doesnt really fit this purpose since its was meant to calculate the best move as the game progresses, and not analyze the entire game. 
 
+I was thinking maybe rather than that, I should just brute force it and analyse all possible states of the game and calculate backwards from the end game states. 
+
 So I came up with a these steps:
 
 1. Get all the possible states of the game
@@ -313,13 +315,15 @@ You could think this of almost like a reverse minimax, where it instead analyzes
 
 As for the algorithm name, I couldnt find a formal name for this algorithm, but its technically similar to [retrograde analysis](https://en.wikipedia.org/wiki/Retrograde_analysis) in the world of chess. I would call it reverse minimax with my own decaying logic for best moves prioritisation.
 
-Technically, this algorithm can solve any 2 player game given that you have enough memory to store all possible states of the game. Even in this case you can easily reach millions of states you have to store in memory. Games like chess would have significantly a lot more game states so its not really groundbreaking but id try apply it to other games in the future.
+As I mentioned, its basically like brute-forcing the entire game, so technically it can solve any 2 player game given that you have enough memory to store all possible states of the game. More complex games like chess would have billions of unique game states so its not really groundbreaking algorithm or anything crazy. But, maybe i'll try to apply it to other games in the future.
 
 ## Symmetry Optimisation
 
-tic-tac-toe or even tactic-toe has a board that you can rotate/flip/mirror and essentially be the same board. As just mentioned, this algorithm has to store all possible states in memory. Thus, if we can reduce the amount of state by eliminating duplicate symmetrical states, that can significantly reduce execution time and memory required.
+As just mentioned, this algorithm has to store all possible states in memory. Thus, if we can reduce the amount of state by eliminating duplicate symmetrical states, that can significantly reduce execution time and memory required. Luckily, tic-tac-toe or even tactic-toe has a board that you can rotate/flip/mirror and essentially be the same board (state).
 
-Imagine if we have a standardized way of representing a state of the game that would eliminate any symmtrical duplicates, with that way, any duplicates will be automatically detected. The way I have implemented this is by having a function called `get_canonical_form()` that converts any state to its canonical (standardized) format.
+Imagine if we have a standardized way of representing a state of the game that would eliminate any symmtrical duplicates, with that way, any duplicates will be automatically detected. ie, if two symmetrical states are converted to the standardized format, they will both be detected as the same state.
+
+The way I have implemented this is by having a function called `get_canonical_form()` that converts any state to its canonical (standardized) format.
 
 ~~~ python
 TRANSFORMATION_MAPS = (

@@ -19,9 +19,9 @@ gallery-sk6805:
   alt: "sk6805-bottom"
 
 gallery-2812:
-- image_path: /assets/posts_assets/tactictoe_6812-top.png
+- image_path: /assets/posts_assets/tactictoe_2812-top.png
   alt: "6812-top"
-- image_path: /assets/posts_assets/tactictoe_6812-bottom.png
+- image_path: /assets/posts_assets/tactictoe_2812-bottom.png
   alt: "6812-bottom"
 
 ---
@@ -130,7 +130,7 @@ SK6805 is the internal RGB LED controller, and EC15 _(1.5mm x 1.5mm)_ is the pac
 
 Its super tiny with the pins underneath which makes fixing soldering mistakes 100x much harder than it should, and so I in the next version I swapped it out with a much cheaper **XINGLIGHT XL-1615RGBC-2812B-S**:
 
-{% include gallery id="gallery-6812" %}
+{% include gallery id="gallery-2812" %}
 
 Its the cheapest RGB LED at $0.0236 with a well known controller (2812B) and a small enough package. Its a different RGB controller with a slightly different data signal timings but its similar enough to sk6805 in which a simple change in software can make it compatible. A more common variant of this LED with the same controller is WS2812 which are more common with addressable LED strips with much higher brightness.
 
@@ -166,18 +166,88 @@ Since the STM32 runs on 3.3V, a linear regulator is needed to step down the USB 
 
 There are no requirements for the passives (resistor and capacitor), so the cheapest generic component with appropriate voltage rating are selected. 0603 package size are chosen for all since its small enough but also solderable by hand in case needed fixing. However, there is a recommendation by application note [AN4310](https://www.st.com/content/ccc/resource/technical/document/application_note/28/4b/40/7c/e6/68/44/9c/DM00087593.pdf/files/DM00087593.pdf/jcr:content/translations/en.DM00087593.pdf) to use specialised NPO or C0G for the best touch sensing sensitivity, but as I found, typical X7R MLCC are good enough for this application. 
 
-# Version 1 prototype
+# Version 1
 
-led 1
+![TTT PCB V1](/assets/posts_assets/tactictoe_v1-3d-front.png)
+
+For this first version, I played it safe to get atleast something working since this is the first time I designed a touch sensor PCB. STM32 provides a lot of different [application notes](https://wiki.st.com/stm32mcu/wiki/Introduction_to_touch_sensing_with_STM32) to help with the design of the touch sensor. However, I realised that A lot of the application notes is for high sensitivity or off-board touch sensing application. 
+
+I found the most useful application note for the design of touch sensor on a PCB is [AN4312](https://www.st.com/content/ccc/resource/technical/document/application_note/46/39/d6/92/4a/4d/40/9f/DM00087990.pdf/files/DM00087990.pdf/jcr:content/translations/en.DM00087990.pdf). It provides a lot of guidlines on how the sensor should be routed and some general dimensions to be followed. Many of the values and guidlines ties back to fundamentally how to maximise the capacitance on the touch pad while minimising capacitance of the traces to the MCU. 
+
+## Stackup
+
+Its practically impossible to route this board with only 2 layers knowing we need GND, 5V, Data IN/OUT on every corner of the LEDs. You might be able to but its not worth my time to optimise it to that level unless I have to. 4 Layers are the way to go, especially now the price are not that expensive compared to 2 layer boards with JLCPCB which is the service I will be using to manufacture the PCBs.
+
+For the stackup, unlike your typical PCB design where you want signals to be as close to ground, the opposite is required for the touch sensing pads. This is because you don't want majority of the capacitance formed by the coupling between the ground plane and touch pad. If so, your finger will barely change the capacitance and it will be much difficult to detect the change in capacitance. 
+
+However, having no plane at all can introduce noise suceptibility to the sensor. Thats why, it is recommended to have thinly **hatched** plane underneath the touch sensors to balance between noise and sensitivity of the sensor. The GND plane is shown below:
+
+![TTT PCB GND Plane](/assets/posts_assets/tactictoe_v1-gnd-plane.png)
+
+Therefore, in the first version, the layer stackup is:
+
+1. Signal Layer (Touch Sensors)   
+2. Signal Layer (LED data signal routing)
+3. GND Plane
+4. +5V Plane 
+
+The touch sensors are distanced from the planes. The GND and 5V planes are closely placed to increase interplane capacitance and reduce impedance. 
+
+Having 5V at the bottom with exposed copper QR code graphic was not a good idea and the 5V and GND was swapped in the second version.
+
+## Touch sensor with RGB Routing
+
+As you can imagine, the capacitive touch sensor pads which are typically in the range of pF, can be very sensetive to noise. This is a huge a problem when you have a fast digital signal for the RGB LEDs that are very close to the pads. To minimise the crosstalk between the capacitive sensor and the LED data signal, the smallest trace width was used and I optimised it to have minimal area overlapping between the two copper surfaces since im routing them in different layers:
+
+![TTT PCB GND Plane](/assets/posts_assets/tactictoe_v1-sig2.png)
+
+The way the sensor and LED is connected is by having three identical rows of sensors and routing. The three rows each has its own LED signal channel connected in daisy-chain configuration. So then it becomes this weird shape which i think is pretty cool looking. Though you can't really see it in the actual pcb because its in the second layer.
+
+## Graphics
+
+The back of the card has my contact details with a QR code to my website. Silkscreen are pretty plain, a much cooler looking is reflective copper, so you can get like 2 tone color for PCB graphics. To do this you need to create a custom shape on the copper Mask layer which are typically used to define exposed copper pads. You can do this very easily in Kicad using Image Converter tool and selecting F.Mask layer in the output. 
+
+![TTT PCB Real Back](/assets/posts_assets/tactictoe_v1-pcb-back.jpg)
+
+It doesnt look very different on camera since in the first version it uses lead-free HASL finish, so it looks silvery-ish. On the final version I used ENIG (Gold Plating) so that it looks much nicer and contrasts the normal white text.
+
+Another big thing to notice is that the silkscreen around vias were removed as part of the manufaturing process because I chose the option of plugged via rather than the more expensive 'filled & capped' vias. The former is typically used for via-in-pad for a flat surface finish.
+
+## Result
+
+![TTT PCB Real Back](/assets/posts_assets/tactictoe_v1-pcb-game.gif){: .align-center}
+
+The unspoken rule of any pcb design is never assume that the first version will work. Indeed, I made quite a few mistakes in the first design. Though luckily I did add quite a few test points and after some bodging I did manage to make it work.
+
+![TTT PCB Real Front](/assets/posts_assets/tactictoe_v1-pcb-front.jpg)
+
+The board was bit dusty when I took the picture. As you can probably see from the dark marks on the board, that shows how much the board has been 'cooked' in order for me properly solder it. The LEDs were a pain to solder even with a hotplate and hot air gun. I spent almost a whole day just to solder one board, and even that was pretty lucky because I failed to solder any other V1 boards completely.
+
+In my design, I used via-in-pad for the RGB LEDs to make the routing much simpler with less footprint area. This comes at the downside that the vias can suck in solder paste when soldering the SMD pads. I wasnt expecting this to be a huge issue with manual soldering as I can fill in the vias first with solder, and then add the solder paste. But even with that extra step, some vias are not fully filled, so it sucked more solder resulting in uneven and unconnected solder joints.
+
+To fix this, its simple, just use plugged & capped via if you are doing via in pad for SMD components. _Lesson learnt_
 
 # Version 2
 
-led 2
 
 
 
 
-# final
+## New Layer Stackup
+
+
+
+## Manufacturing Options
+
+
+
+
+## Total Costs
+
+
+
+
+
 
 
 

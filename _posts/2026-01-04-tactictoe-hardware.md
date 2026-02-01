@@ -11,6 +11,19 @@ tags:
 header:
   image: /assets/posts_assets/tactictoe_pcb-all-layers.png
   teaser: /assets/posts_assets/tactictoe_pcb-all-layers.png
+
+gallery-sk6805:
+- image_path: /assets/posts_assets/tactictoe_sk6805-top.png
+  alt: "sk6805-top"
+- image_path: /assets/posts_assets/tactictoe_sk6805-bottom.png
+  alt: "sk6805-bottom"
+
+gallery-2812:
+- image_path: /assets/posts_assets/tactictoe_6812-top.png
+  alt: "6812-top"
+- image_path: /assets/posts_assets/tactictoe_6812-bottom.png
+  alt: "6812-bottom"
+
 ---
 
 
@@ -64,11 +77,11 @@ Now that we have looked at some inspirations. I have a few requirements for my o
 
 - **As thin as possible + credit card sized**
 
-Its not really a business card if its too thick or in a different size. So for this as a minimum it has to fit inside a typical wallet. This requirement alone rules out a lot of typical components including through hole components and buttons. 
+Its not really a business card if its too thick or in a different size. So for this as a minimum it has to fit inside a typical wallet. This requirement alone rules out a lot of typical components including through hole components and buttons.
 
 - **Cheap and Simple**
 
-Its not really an engineering project if it doesnt involve any cost restriction. Since I'm planning to give it to people, I will be making quite a few of them and the cheaper they are the better. This inderictly means as little components as possible (within reason).
+Cost is a huge consideration. Since I'm planning to give it to people, I will be making quite a few of them and the cheaper they are the better. This inderictly means as little components as possible (within reason).
 
 - **Runs the perfect Tactic-toe AI**
 
@@ -87,27 +100,71 @@ Theres a few challenges with this design, how do player interface with the game 
 
 First, player interface. buttons are a no go for me since its quite thick and makes the pcb slightly uneven. There are super thin buttons but they are rather ugly in my opinion. A much better alternative is touch sensor thats built in the PCB layer. This comes at a more complex trace routing design but its worth it for a cleaner look. 
 
-Second, board display. The big issue with this is how would you display an X and O, or atleast differentiate them? You could use a single LED with a 
+Second, board display. Definitely will use LEDs for lower cost. But how would you indicate X or an O? You could use different colours or different shapes. 
+
+A typical LED would require one GPIO from the MCU to control ON/OFF. Assuming the least amount of LEDs, i.e. 2 LEDs per square, one for each color player, you would need `9x2=18` gpio pins. Plus, with 9 touch inputs, then you would need an MCU with a larger pins package which typically comes at a higher cost. This is not even considering if the MCU can sink/source enough current for all LEDs.
+
+Eventually, I settled with 5 RGB LEDs in X shape config:
+
+![LED config](/assets/posts_assets/tactictoe_led-config.png)
+
+Atleast that was the plan. After getting showing the version 1 to people and getting feedback, I ended up just using the X with different colour to differentiate X and O.
+
+Using addressable RGBs has the advantage of much easier routing as each RGB led has its own built in controller. What that means is that each LED is controlled using a single asynchrounous data line (like UART), and it can also be daisy-chained, like. Plus, each LED can be powered directly from 5V without any current limiting resistor. Brightness and colour can easily be changed using the data signal.
+
+To keep costs lower, and not make the PCB too thick, I decided not to have any battery onboard. Instead, the pcb has to be powered using 5V USB. Having a battery requires an extra DC-DC converter circuitry and potentially charging circuitry if rechargable battery is used. I think its worth the tradeoff especially since power banks are pretty cheap nowadays to make it portable if needed.
 
 # Component Selection
 
 For the cheapest generic components bought in bulk, LCSC is the the place to go. Aliexpress can offer better price but navigating the amount of scams and counterfiet components is just not worth it. So, all the components are surveyed on LCSC for this project. 
 
-## LEDs
+## RGB LEDs
 
+This will be the most expensive part of this project due to the amount required. They are not as cheap as normal LEDs. So, for this, I sorted by price on LCSC and looked at its size, where smaller is better but not too small otherwise it will be impossible to solder by hand.
 
+In the first revision I have opted for **OPSCO Optoelectronics SK6805-EC15**:
 
-## Player Input
+{% include gallery id="gallery-sk6805" %}
 
+SK6805 is the internal RGB LED controller, and EC15 _(1.5mm x 1.5mm)_ is the package size. This was actually not the cheapest at $0.0605 each as I was not very familiar with RGB LEDs at the time and there were many confusing info online, so I just went with.
 
-## Linear Regulator
+Its super tiny with the pins underneath which makes fixing soldering mistakes 100x much harder than it should, and so I in the next version I swapped it out with a much cheaper **XINGLIGHT XL-1615RGBC-2812B-S**:
 
-Since the MCU requires 3.3V, a linear regulator is needed to step down the USB 5V to 3.3V. We dont need any fancy feature or the best noise performance, so the cheapest Linear Regulator from Ti was chosen which is 
+{% include gallery id="gallery-6812" %}
 
+Its the cheapest RGB LED at $0.0236 with a well known controller (2812B) and a small enough package. Its a different RGB controller with a slightly different data signal timings but its similar enough to sk6805 in which a simple change in software can make it compatible. A more common variant of this LED with the same controller is WS2812 which are more common with addressable LED strips with much higher brightness.
 
-# Name Card Graphics
+## Capacitive Touch Sensor
 
+As discussed, I wanted a touch sensor. There are many ways to achieve this, but the most common way to implement directly on a PCB is capacitive touch sensor. To put simply, a capacitor is formed with two plates placed close together. The way the sensor works, the copper on the pcb forms one side of the capacitor and your finger becomes the other plate, and depending on the distance of your finger to the copper, it varies the capacitor value in the order of picoFarads (pF).
 
+Then to measure the capacitance, there are many methods to do so. There are even plenty of dedicated touch controller ICs than can directly be used. However, in an attempt to make it as simple as possible, I opted to use STM32's hardware touch sensor peripheral. This means that I have to look for STM32 that has this peripheral as not all of them has it.
+
+![TSC Compability](/assets/posts_assets/tactictoe_tsc-compatibility.png)
+
+**TSC** or **Touch Sensing Controller** is STM32's implementation of hardware touch sensing peripheral. The way TSC works, it charges the sensor capacitor, and then uses it to charge a sampling capacitor. Since the sampling capcitor are typically much larger than the sensor capacitor, it will take multiple cycles to charge the sampling capacitor. Then, depending on how many cycles it took to charge the sampling capacitor, you can relatively measure the capacitance of the sensor capacitor, i.e. if a finger is close to the sensor. 
+
+The equivalent circuit is shown below:
+
+![TSC Charge Diagram](/assets/posts_assets/tactictoe_tsc-charge.png)
+
+_Image taken from [STM32 wiki](https://wiki.st.com/stm32mcu/wiki/Introduction_to_touch_sensing_with_STM32)_
+
+Different microcontrollers have their own implemention of measuring capacitance and I read somewhere that Microchip has a better implementation but I couldn't find where I read it. Its just worth mentioning because there are other methods of measuring capacitance and some might be better than the other depending on the application.
+
+## Microcontroller
+
+The second highest cost component is the MCU. To reduce the complexity of this project I've opted to use STM32 that I am already quite familiar with. So, I filtered STM32 series with hardware TSC and sort by price. The cheapest one I found is **STM32F042G6U6TR** for $0.8811 each.
+
+It uses ARM Cortex-M0 with 48MHz clock speed. Plenty for this application. It also comes in UFQFN-28 package which is solderable with hot air or even hand solder. However, that also means we are quite limited in usable GPIO pins. Luckily, it has just enough pins to make this design possible. 
+
+Whats unfortunate is the ROM size, which is only 32 KB Flash. This is plenty for most application but it does limit what I can do and became quite a limitation in firmware when implementing the AI. _Will be explained more in firmware article._
+
+## Linear Regulator and Other Passives
+
+Since the STM32 runs on 3.3V, a linear regulator is needed to step down the USB 5V to 3.3V. We dont need any fancy feature or the best noise performance, so the cheapest Linear Regulator from Ti was chosen (TLV74033PDBVR) in the standard SOT-23 package.
+
+There are no requirements for the passives (resistor and capacitor), so the cheapest generic component with appropriate voltage rating are selected. 0603 package size are chosen for all since its small enough but also solderable by hand in case needed fixing. However, there is a recommendation by application note [AN4310](https://www.st.com/content/ccc/resource/technical/document/application_note/28/4b/40/7c/e6/68/44/9c/DM00087593.pdf/files/DM00087593.pdf/jcr:content/translations/en.DM00087593.pdf) to use specialised NPO or C0G for the best touch sensing sensitivity, but as I found, typical X7R MLCC are good enough for this application. 
 
 # Version 1 prototype
 

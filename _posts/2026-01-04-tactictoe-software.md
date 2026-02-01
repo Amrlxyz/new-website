@@ -415,7 +415,7 @@ If you are curious, open the console on the [online tactic-toe][online-tactictoe
 
 All of the code used including the web game HTML are all open source in my public github repo. Feel free to try it out or even improve it and **I challenge you to beat my AI**.
 
-Link to github repo: [**github.com/Amrlxyz/tactictoe**](https://github.com/Amrlxyz/tactictoe) 
+Link to the github repo: [**github.com/Amrlxyz/tactictoe**](https://github.com/Amrlxyz/tactictoe) 
 {: .notice}
 
 [online-tactictoe]: https://tactic-toe.pages.dev/ "Optional"

@@ -227,29 +227,66 @@ In my design, I used via-in-pad for the RGB LEDs to make the routing much simple
 
 To fix this, its simple, just use plugged & capped via if you are doing via in pad for SMD components. _Lesson learnt_
 
+
 # Version 2
 
+![TTT PCB V2 PCB](/assets/posts_assets/tactictoe_pcb-front-back-compressed.jpg)
 
+Version 2 includes the changes mentioned previously with other minor changes:
 
+In terms of the design:
 
+- Replaced RGB LEDs
+- Swapped GND and +5V Planes 
+- Fixed wrong PWM pin fault in Version 1 
+- Remade top PCB graphics
+- Other minor fixes
 
-## New Layer Stackup
+![TTT PCB V2 All layers](/assets/posts_assets/tactictoe_pcb-all-layers.png)
 
-
+Apart from that, the design are practically the same.
 
 ## Manufacturing Options
 
+At the time Summer was almost ending, I decided I have to finish the project quickly. I dont have enough time to make another prototype version. So, I took a gamble and make the changes and fully commit to manufacture the final version (V2) without testing it first.
 
+Considering that I took almost one whole day to solder just one board, I thought it might just be better that for this final version, I should try out JLCPCB Assembly service. Although, it will be a bit more expensive, it would save me so much time and the quality of solder will be much more consistent especially since I will be giving them away.
 
+**Pro Tip:** To keep costs low, make sure to use basic components on JLCPCB assembly otherwise there will be extra setup costs. There are also some components considered difficult to assemble which will add even more fee on top. One example is the USB-C connector I used. So, I decided to solder them on my own. 
+
+> Fun fact: LCSC and JLCPCB are kind of the same company so the components available on LCSC are likely to be also available for JLCPCB assembly service.
+
+I also wanted to get the more expensive manufacturing options, ENIG finish, Epoxy Filled and Capped Vias, it will further add more to the cost. With all these in mind, I can't mess up this final version otherwise it will all go to waste.
+
+After placing the order and waiting for 2 weeks anxiously, it arrived. I soldered on the USB-C connector and **it just works**. I was so happy that it works and how clean looking it turned out. The soldering job is far better than what I can do (obviously).
 
 ## Total Costs
 
+Here comes one of the most frequently asked question when I showed the PCB to people: 
 
+**How much does it cost to make one?**
+{: .text-center}
 
+Before I get into the cost, I have to address something:
 
+At the start I mentioned that cost was one of the biggest factors but at the end, I chose the expensive way of manufacturing the boards. Sure, I could spend less money by optimising the board for the lowest cost possible and soldering each board myself, but that will take significantly more time. Plus, I recently got some extra money from my summer internship, so I call the extra costs as investment for myself.
 
+Now that's settled,
 
+The total cost is: `£213.09 + £56.89 (tax) = £270` for 50 boards, which is `£5.4` per board. Yeah, its not cheap. I made a lot to reduce per-board cost and 50 was the sweet spot. Also, I made plenty so that I dont have to make more in the future.
 
+![PCB Costs](/assets/posts_assets/tactictoe_costs.png)
+
+The assembly cost was suprisingly quite reasonable for high quantities.
+
+I considered buying the components separately but even just considering the shipping costs, its almost the same cost as the setup cost for the assembly. If you are soldering it manually, you need a stencil and that adds costs too. So eventually, I think the assembly cost was not that bad. 
+
+# Design Files
+
+All the design files both V1 and V2 are open source and they are on my github repo. Feel free to check it out if you are interested.
+
+Link to the github repo: [**github.com/Amrlxyz/tactictoe-pcb**](https://github.com/Amrlxyz/tactictoe-pcb) 
+{: .notice}
 
 
 

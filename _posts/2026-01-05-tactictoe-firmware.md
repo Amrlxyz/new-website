@@ -15,14 +15,8 @@ header:
   teaser: /assets/posts_assets/tactictoe_pcb-gameplay-compressed.gif
 ---
 
-
----
-
-# Firmware
-
 Please first see the [overview article](../tactictoe-overview) to learn about tactic-toe
 {: .notice}
-
 
 # how states are encoded in raw bytes
 

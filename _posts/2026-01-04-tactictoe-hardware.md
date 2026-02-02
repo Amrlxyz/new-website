@@ -9,7 +9,7 @@ tags:
   - Embedded Systems
 
 header:
-  image: /assets/posts_assets/tactictoe_pcb-all-layers.png
+  # image: /assets/posts_assets/tactictoe_pcb-all-layers.png
   teaser: /assets/posts_assets/tactictoe_pcb-all-layers.png
 
 gallery-sk6805:
@@ -104,13 +104,13 @@ Second, board display. Definitely will use LEDs for lower cost. But how would yo
 
 A typical LED would require one GPIO from the MCU to control ON/OFF. Assuming the least amount of LEDs, i.e. 2 LEDs per square, one for each color player, you would need `9x2=18` gpio pins. Plus, with 9 touch inputs, then you would need an MCU with a larger pins package which typically comes at a higher cost. This is not even considering if the MCU can sink/source enough current for all LEDs.
 
-Eventually, I settled with 5 RGB LEDs in X shape config:
+Eventually, I settled with 5 RGB LEDs in X shape config per square:
 
 ![LED config](/assets/posts_assets/tactictoe_led-config.png)
 
-Atleast that was the plan. After getting showing the version 1 to people and getting feedback, I ended up just using the X with different colour to differentiate X and O.
+_Atleast that was the plan. After getting showing the version 1 to people and getting feedback, I ended up just using the X with different colour to differentiate X and O._
 
-Using addressable RGBs has the advantage of much easier routing as each RGB led has its own built in controller. What that means is that each LED is controlled using a single asynchrounous data line (like UART), and it can also be daisy-chained, like. Plus, each LED can be powered directly from 5V without any current limiting resistor. Brightness and colour can easily be changed using the data signal.
+Using addressable RGBs has the advantage of much easier routing as each RGB led has its own built in controller. What that means is that each LED is controlled using a single asynchrounous data line (like UART), and it can also be daisy-chained. Plus, each LED can be powered directly from 5V without any current limiting resistor. Brightness and colour can easily be changed using the data signal.
 
 To keep costs lower, and not make the PCB too thick, I decided not to have any battery onboard. Instead, the pcb has to be powered using 5V USB. Having a battery requires an extra DC-DC converter circuitry and potentially charging circuitry if rechargable battery is used. I think its worth the tradeoff especially since power banks are pretty cheap nowadays to make it portable if needed.
 
@@ -126,9 +126,9 @@ In the first revision I have opted for **OPSCO Optoelectronics SK6805-EC15**:
 
 {% include gallery id="gallery-sk6805" %}
 
-SK6805 is the internal RGB LED controller, and EC15 _(1.5mm x 1.5mm)_ is the package size. This was actually not the cheapest at $0.0605 each as I was not very familiar with RGB LEDs at the time and there were many confusing info online, so I just went with.
+SK6805 is the internal RGB LED controller, and EC15 _(1.5mm x 1.5mm)_ is the package size. This was actually not the cheapest at $0.0605 each as I was not very familiar with RGB LEDs at the time and there were many confusing info online, so I just went with it.
 
-Its super tiny with the pins underneath which makes fixing soldering mistakes 100x much harder than it should, and so I in the next version I swapped it out with a much cheaper **XINGLIGHT XL-1615RGBC-2812B-S**:
+Its super tiny with the pins underneath which makes fixing soldering mistakes 100x much harder than it should, and so in the next version I swapped it out with a much cheaper **XINGLIGHT XL-1615RGBC-2812B-S**:
 
 {% include gallery id="gallery-2812" %}
 

@@ -13,10 +13,10 @@ header:
   teaser: /assets/posts_assets/tactictoe_web-game.png
 ---
 
-# Introduction
-
 Please first see the [overview article](../tactictoe-overview) to learn about tactic-toe
 {: .notice}
+
+# Introduction
 
 This article will explore how I solved tactic-toe and created an AI that plays the game perfectly.
 

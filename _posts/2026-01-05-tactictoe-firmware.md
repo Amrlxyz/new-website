@@ -46,6 +46,8 @@ To find the best move for a given state, just lookup the all next possible state
 
 The chosen MCU is STM32G042G6U6 with only **6KB RAM** and **32KB Flash** (ROM).
 
+![F042 specs](/assets/posts_assets/tactictoe_f042-specs.png)
+
 To make the AI, your first thought might be to just store the best move for all the possible states into flash. So, for every state, you need to store the state and the best move itself. The AI algorithm then just have look for the state in memory and just grabs the best move.
 
 This wouldn't be a problem if you have enough memory to store all of the precalculated states and moves. Given that there is 16030 states, and 32KB of flash, you need to store a single state-move pair in under 2 bytes to fit. Thats not even accounting for the rest of the program size which easily will take up a few KBs atleast.  
@@ -220,25 +222,63 @@ bestMove = symMoveList[randSeed % symMoveIndex];
 
 # RGB LEDs
 
+The RGB LEDs I used are **SK6805-EC15** in V1 and **XL-1615RGBC-2812B-S** in V2. The controller embedded inside the LEDs are actually SK6805 and 2812B respectively. They are in fact very popular among addressable RGB LED markets with various package sizes and shapes, but the controllers are the same.
 
+This is relevant becuase of how they are controlled. They both share very similar protocol.
 
-## PWM to send data
+## PWM to send digital data
 
+If you say PWM, the last thing I would have thought is that PWM for digital data transfer. Surprsingly, it is actually common to use PWM to send digital data to RGB LEDs, and indeed this is what I used. Sure, PWM are also used for some servos to send position data, but in that, the position is determined by duty cycle, whereas in this, actual bits are transferred using PWM.
 
+Fundamentally, PWM is actually just a timer peripheral with a counter period to set the duty cycle.
 
-# Touch Sensor
+SK6805 and 2812B both uses an interesting way to transmit 1s and 0s. With a fixed period from the datasheet, the duty cycle determines if its either 1 or 0. The way i think of it is like UART, its async with a fixed baudrate, but instead of HI and LO determines 1 and 0, its determined by duty cycle. Then to stop, a long pulse of 0 is sent. The waveforms are shown below:
 
+![RGB Timing](/assets/posts_assets/tactictoe_rgb-timing.png)
+
+With 24 bits, you can define Red, Green, Blue, brightness individually. If, more than 24 is sent, the next bits are passed down in the daisy chain of RGB LEDs. Then, by using a timer with DMA simplifies data transmission quite a lot.
+
+![RGB Bits](/assets/posts_assets/tactictoe_rgb-bits.png)
+
+For a much better explanation on the protocol and how to implement it on CubeIDE, I used this video from one of my favourite youtuber:
+
+{% include video id="MqbJTj0Cw6o" provider="youtube" %}
+
+The major difference between the two LED controllers are just the bit timings, otherwise they are identical. Both have the same minimum period, 1.2 us (833.3 kHz). With 15 LEDs in a daisy-chain on this design, and each requires 24 bits + 1 reset bit (200 us for 2812), the theoretical update rate is 1.8 kHz (632 us). This is very fast, so the LEDs are only updated when there are new changes to the board to minimise the noise that can affect the touch sensors sensitivity.
+
+# Touch Sensors
+
+The PCB touch sensors uses an on-chip touch controller peripheral called Touch Sensing Controller (TSC). Unlike other more common peripherals, the TSC are pretty limited in terms of resources online. There are application notes and references but they are not beginner friendly. 
 
 ## Touch Sensing Controller (TSC)
 
+Typically, to use any STM32 hardware peripheral, I would first refer the STM32 chip reference manual to read on how the peripheral actually works, and hardware registers to use. Then after getting an idea, I would refer to the STM32 HAL manual to find the functions that can do all the low-level register configs for me.
 
-## interrupts with TSC
+However, for TSC, there is another layer on top of HAL that can help with the development. This is called the TouchSensing library by STM32. This abstracts away a lot of complexity from the HAL layer and adds on built in extra features, like debouncing, auto calibration which is very good for this project.
 
+The problem is, the documentation on this is very limited. There is a user manual UM1913 but its a super long PDF with no clear guide to just get something simple working. Its great for very detailed description but for me who just wants something simple to test its just very overwhelming.
 
+At the end, I managed to get something basic working by referring to a sample code from another STM32 discovery board with an onboard touch sensor pad.
 
-# Other stuff
+## Interrupts with TouchSensing library 
+
+Ideally, you would want the TSC hardware to sample in the background with interrupts, so it wouldnt slow down the main code execution. The TS Library does provide an interrupt sampling function called `tsl_user_Exec_IT()` but trying to get it to work reliably was a challenge. Again, this was mainly due to me just doing trial and error rather than going through the user manual properly (but thats boring).
+
+Then, I found this [video](https://www.youtube.com/watch?v=IhBRt328iPg) on a lab example for the TouchSensing library. It helped on how to set up the peripheral but it still doesnt explain how to use the interrupt version of the library.
+
+Finally, after a lot of trial and error, the way I implemented `tsl_user_Exec_IT()` is by having a timer interrupt that runs the function at a fixed frequency. It ended up working very well. I think the problem before was becuase the touch sensing function was ran with an inconsistent timing between polls causing it to break some functionalities.
+
+I have no way of verifying of verifying if this is the intended way to achieve interrupt polling, but I guess *if it works dont fix it*.
+
+# Other Stuffs
 
 There a bunch of other smaller things I considered and problems in the project but it would impossible to mention all of them. So here are some of my favourites.
+
+## GPIO Pins Utilization
+
+![GPIO Pins](/assets/posts_assets/tactictoe_gpio-pins.png)
+
+At the end, only 6 out of 28 pins was left unused. I think this is the first time where I have used up almost all of the pins on a microcontroller. Typically you would only use a few of them. Making sure every pins have the required functionality and optimising for PCB routing difficulty was quite a challenge.
 
 ## USB Support
 
